@@ -90,35 +90,41 @@ $(function(){
 
   function newBus(b) {
     var bus = b.val();
-    var marker = L.marker([bus.lat, bus.lon]).addTo(map);
+    var marker = L.circleMarker([bus.lat, bus.lon], {
+      radius: 4,
+      fillColor: '#f15a24',
+      color: '#fcf5f0',
+      weight: 2,
+      opacity: 1
+    }).addTo(map).bringToFront();
     buses[b.name()] = marker;
   }
 
   // New buses
-  //f.once("value", function (s) {
-  //  s.forEach(function (b) {
-  //    newBus(b);
-  //    // console.log("New bus", b.val(), b.name());
-  //  });
-  //});
-//
-  //// When the bus moves
-  //f.on("child_changed", function (b) {
-  //  if(!buses[b.name()]) {
-  //    newBus(b);
-  //    return;
-  //  }
-  //  var bus = b.val();
-  //  buses[b.name()].setLatLng(new L.LatLng(bus.lat, bus.lon));
-  //  // console.log("changed", b.val(), b.name());
-  //});
-//
-  //// When the bus goes away
-  //f.on("child_removed", function (b) {
-  //  if(!buses[b.name()]) {
-  //    return;
-  //  }
-  //  map.removeLayer(buses[b.name()]);
-  //});
+  f.once("value", function (s) {
+    s.forEach(function (b) {
+      newBus(b);
+      // console.log("New bus", b.val(), b.name());
+    });
+  });
+
+  // When the bus moves
+  f.on("child_changed", function (b) {
+    if(!buses[b.name()]) {
+      newBus(b);
+      return;
+    }
+    var bus = b.val();
+    buses[b.name()].setLatLng(new L.LatLng(bus.lat, bus.lon)).bringToFront();
+    // console.log("changed", b.val(), b.name());
+  });
+
+  // When the bus goes away
+  f.on("child_removed", function (b) {
+    if(!buses[b.name()]) {
+      return;
+    }
+    map.removeLayer(buses[b.name()]);
+  });
 
 });
