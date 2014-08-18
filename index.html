@@ -3,19 +3,54 @@
   <head>
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />-->
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
+    <link rel="stylesheet" type="text/css" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+
     <link href="css/app.css" rel="stylesheet" media="screen">
 
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
   </head>
   <body>
-    <div id="map"></div>
+    <div class="container">
+      <div class="a">
+        <div id="map"></div>
+      </div>
+      <div class="b databar">
+        <h2>Data Layers</h2>
 
+        <ul class="data-tabs">
+          <li class="selected"><i class="icon ion-cash"></i></li>
+          <li><i class="icon ion-bag"></i></li>
+          <li><i class="icon ion-model-s"></i></li>
+          <li><i class="icon ion-social-twitter-outline"></i></li>
+          <li><i class="icon ion-android-user-menu"></i></li>
+        </ul>
+
+        <div class="data-tab tab-permits">
+          <h3>Street Use Permits</h3>
+          <div id="slider"></div>
+          <div id="legend"></div>
+        </div>
+        <div class="data-tab tab-money">
+          <h3><a class="toggle"><i class="icon ion-ios7-eye"></i></a> Median Income</h3>
+        </div>
+
+      </div>
+    </div>
+    <header>
+      <img src="img/logo.png" alt="LocalData" height="70">
+    </header>
+  </div>
 
     <script src="https://cdn.firebase.com/js/client/1.0.19/firebase.js"></script>
     <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+    <!--<script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>-->
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="streets.geojson"></script>
     <script src="js/app.js"></script>
 
   </body>
