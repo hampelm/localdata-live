@@ -1,4 +1,4 @@
-/*global Firebase, L, cartodb, moment */
+/*global Firebase, L, cartodb, moment, Rickshaw */
 
 $(function(){
   var buses = {};
@@ -8,27 +8,26 @@ $(function(){
   map.addLayer(baseLayer);
 
   // Add economic layer
-  //cartodb.createLayer(map, 'http://localdata.cartodb.com/api/v2/viz/4619a2c4-263c-11e4-a26e-0e73339ffa50/viz.json')
-  //   .addTo(map)
-  //   .done(function(layer){
-  //      console.log("Done");
-  //      layer.setZIndex(1);
+  cartodb.createLayer(map, 'http://localdata.cartodb.com/api/v2/viz/4619a2c4-263c-11e4-a26e-0e73339ffa50/viz.json')
+     .addTo(map)
+     .done(function(layer){
+        layer.setZIndex(1);
 
-  //      // Hide / show the money layer
-  //      var shown = true;
-  //      $('.tab-money .toggle').click(function(event) {
-  //        console.log("Clicked");
-  //        event.preventDefault();
-  //        if (shown) {
-  //          layer.hide();
-  //        } else {
-  //          layer.show();
-  //        }
-  //        $(this).find('.icon').toggleClass('ion-ios7-eye');
-  //        $(this).find('.icon').toggleClass('ion-ios7-eye-outline');
-  //        shown = !shown;
-  //      });
-  //   });
+        // Hide / show the money layer
+        var shown = true;
+        $('.tab-money .toggle').click(function(event) {
+          console.log("Clicked");
+          event.preventDefault();
+          if (shown) {
+            layer.hide();
+          } else {
+            layer.show();
+          }
+          $(this).find('.icon').toggleClass('ion-ios7-eye');
+          $(this).find('.icon').toggleClass('ion-ios7-eye-outline');
+          shown = !shown;
+        });
+     });
 
   function changeLegend(start, end) {
     var startDate = moment(start);
@@ -68,33 +67,65 @@ $(function(){
   }
 
 
-  // Add permits layer
-  // cartodb.createLayer(map, {
-  //   user_name: 'localdata',
-  //   type: 'cartodb',
-  //   sublayers: [{
-  //     sql: "SELECT * FROM san_francisco_street_permits",
-  //     cartocss: '#table_name {marker-fill: #58aeff; marker-line-color: #daedff; marker-line-width:2; }'
-  //   }]
-  // })
-  // .addTo(map)
-  // .done(function(layer) {
-  //   layer.setZIndex(2);
-  //   addTimeSlider(layer.getSubLayer(0));
-  // });
+  // Add permits slider
+  cartodb.createLayer(map, {
+    user_name: 'localdata',
+    type: 'cartodb',
+    sublayers: [{
+      sql: "SELECT * FROM san_francisco_street_permits",
+      cartocss: '#table_name {marker-fill: #58aeff; marker-line-color: #daedff; marker-line-width:2; }'
+    }]
+  })
+  .addTo(map)
+  .done(function(layer) {
+    layer.setZIndex(2);
+    addTimeSlider(layer.getSubLayer(0));
+  });
+
+  // Set up for SQL queries
+  var sql = cartodb.SQL({ user: 'localdata' });
+
+
+  // Count permits by census block
+  sql.execute("SELECT acs.b19013e1, acs.geoid_long,  COUNT(*) as count FROM acs_2012_income_blockgroups_shp as acs, san_francisco_street_permits as permits WHERE ST_Contains(acs.the_geom, permits.the_geom) GROUP BY acs.b19013e1, acs.geoid_long ORDER BY count DESC; ")
+    .done(function(data) {
+      console.log("Got permit -- area data", data);
+      _.each(data.rows, function(row) {
+        $('#censustable').append('<tr><td>' + row.geoid_long + '</td><td>$' + row.b19013e1 + '</td><td>' + row.count + '</td></tr>');
+      });
+    });
+
 
 
   // Graph for permit data
-  var sql = cartodb.SQL({ user: 'localdata' });
   sql.execute("SELECT to_char(approved_date, 'YYYY-MM'), count(*) FROM san_francisco_street_permits group by to_char(approved_date, 'YYYY-MM') ORDER BY to_char(approved_date, 'YYYY-MM') ASC")
     .done(function(data) {
-      var graph = new Rickshaw.Graph({
-        series: [ { data: [ { x: 0, y: 2 }, { x: 1, y: 4 } ...
-        renderer: 'area',
-        element: document.querySelector('#graph')
+      var prepped = [];
+      console.log(data.rows);
+      _.each(data.rows, function(row, index) {
+        prepped.push({
+          x: index,
+          y: row.count
+        });
       });
 
+      var graph = new Rickshaw.Graph({
+        series: [{
+          data: prepped,
+          color: '#daedff'
+        }],
+        renderer: 'area',
+        element: document.querySelector('.tab-permits .graph')
+      });
       graph.render();
+
+      var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+        graph: graph,
+        formatter: function(series, x, y) {
+          var month = data.rows[x - 1].to_char;
+          return month + '<br>' + y + ' permits';
+        }
+      });
   });
 
   // Bus stuff ================
@@ -109,7 +140,8 @@ $(function(){
       fillColor: '#f15a24',
       color: '#fcf5f0',
       weight: 2,
-      opacity: 100
+      opacity: 1,
+      fillOpacity: 1
     }).addTo(map).bringToFront();
     buses[b.name()] = marker;
   }

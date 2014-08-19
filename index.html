@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
     <link rel="stylesheet" type="text/css" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="js/lib/rickshaw/rickshaw.min.css" />
 
     <link href="css/app.css" rel="stylesheet" media="screen">
 
@@ -29,6 +30,7 @@
 
         <div class="data-tab tab-permits">
           <h3>Street Use Permits</h3>
+          <div class="graph"></div>
           <div id="slider"></div>
           <div id="legend"></div>
         </div>
@@ -43,6 +45,15 @@
 
       </div>
     </div>
+    <div class="container">
+      <table id="censustable">
+        <tr>
+          <th>Block group</th>
+          <th>Median income</th>
+          <th>Permits issued</th>
+        </tr>
+      </table>
+    </div>
     <header>
       <img src="img/logo.png" alt="LocalData" height="70">
     </header>
@@ -55,6 +66,8 @@
     <!--<script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>-->
     <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/lib/d3/d3.min.js"></script>
+    <script src="js/lib/rickshaw/rickshaw.min.js"></script>
     <script src="streets.geojson"></script>
     <script src="js/app.js"></script>
 

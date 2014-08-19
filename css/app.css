@@ -80,3 +80,8 @@ a {
   width: 15px;
   text-align: center;
 }
+
+.rickshaw_graph .detail .x_label {
+  display: none
+}
+
