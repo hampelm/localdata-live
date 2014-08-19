@@ -1,0 +1,22 @@
+{
+  "name": "localdata-live",
+  "version": "0.0.0",
+  "homepage": "https://github.com/hampelm/localdata-live",
+  "authors": [
+    "Matt Hampel <matth@localdata.com>"
+  ],
+  "main": "index.html",
+  "directory": "js/lib",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "~3.4.11"
+  }
+}

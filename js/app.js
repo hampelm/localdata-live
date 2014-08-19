@@ -8,27 +8,27 @@ $(function(){
   map.addLayer(baseLayer);
 
   // Add economic layer
-  cartodb.createLayer(map, 'http://localdata.cartodb.com/api/v2/viz/4619a2c4-263c-11e4-a26e-0e73339ffa50/viz.json')
-     .addTo(map)
-     .done(function(layer){
-        console.log("Done");
-        layer.setZIndex(1);
+  //cartodb.createLayer(map, 'http://localdata.cartodb.com/api/v2/viz/4619a2c4-263c-11e4-a26e-0e73339ffa50/viz.json')
+  //   .addTo(map)
+  //   .done(function(layer){
+  //      console.log("Done");
+  //      layer.setZIndex(1);
 
-        // Hide / show the money layer
-        var shown = true;
-        $('.tab-money .toggle').click(function(event) {
-          console.log("Clicked");
-          event.preventDefault();
-          if (shown) {
-            layer.hide();
-          } else {
-            layer.show();
-          }
-          $(this).find('.icon').toggleClass('ion-ios7-eye');
-          $(this).find('.icon').toggleClass('ion-ios7-eye-outline');
-          shown = !shown;
-        });
-     });
+  //      // Hide / show the money layer
+  //      var shown = true;
+  //      $('.tab-money .toggle').click(function(event) {
+  //        console.log("Clicked");
+  //        event.preventDefault();
+  //        if (shown) {
+  //          layer.hide();
+  //        } else {
+  //          layer.show();
+  //        }
+  //        $(this).find('.icon').toggleClass('ion-ios7-eye');
+  //        $(this).find('.icon').toggleClass('ion-ios7-eye-outline');
+  //        shown = !shown;
+  //      });
+  //   });
 
   function changeLegend(start, end) {
     var startDate = moment(start);
@@ -69,18 +69,32 @@ $(function(){
 
 
   // Add permits layer
-  cartodb.createLayer(map, {
-    user_name: 'localdata',
-    type: 'cartodb',
-    sublayers: [{
-      sql: "SELECT * FROM san_francisco_street_permits",
-      cartocss: '#table_name {marker-fill: #58aeff; marker-line-color: #daedff; marker-line-width:2; }'
-    }]
-  })
-  .addTo(map)
-  .done(function(layer) {
-    layer.setZIndex(2);
-    addTimeSlider(layer.getSubLayer(0));
+  // cartodb.createLayer(map, {
+  //   user_name: 'localdata',
+  //   type: 'cartodb',
+  //   sublayers: [{
+  //     sql: "SELECT * FROM san_francisco_street_permits",
+  //     cartocss: '#table_name {marker-fill: #58aeff; marker-line-color: #daedff; marker-line-width:2; }'
+  //   }]
+  // })
+  // .addTo(map)
+  // .done(function(layer) {
+  //   layer.setZIndex(2);
+  //   addTimeSlider(layer.getSubLayer(0));
+  // });
+
+
+  // Graph for permit data
+  var sql = cartodb.SQL({ user: 'localdata' });
+  sql.execute("SELECT to_char(approved_date, 'YYYY-MM'), count(*) FROM san_francisco_street_permits group by to_char(approved_date, 'YYYY-MM') ORDER BY to_char(approved_date, 'YYYY-MM') ASC")
+    .done(function(data) {
+      var graph = new Rickshaw.Graph({
+        series: [ { data: [ { x: 0, y: 2 }, { x: 1, y: 4 } ...
+        renderer: 'area',
+        element: document.querySelector('#graph')
+      });
+
+      graph.render();
   });
 
   // Bus stuff ================
@@ -95,7 +109,7 @@ $(function(){
       fillColor: '#f15a24',
       color: '#fcf5f0',
       weight: 2,
-      opacity: 1
+      opacity: 100
     }).addTo(map).bringToFront();
     buses[b.name()] = marker;
   }
